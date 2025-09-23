@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>O‘zgarishlar tarixi</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h2>🕒 O‘zgarishlar tarixi</h2>
+  <ul>
+    {% for h in history %}
+      <li>{{h[0]}} → {{h[1]}} ({{h[2]}} tomonidan)</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

@@ -1,7 +1,8 @@
 import logging
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
+API_TOKEN = "
+8497416969:AAGl74-w7DI3M61x3tSl1j-u_pSB_ofvyNg"
 WEB_APP_URL = "https://your-render-url.onrender.com"  # Flask joylashgan manzil
 
 logging.basicConfig(level=logging.INFO)

@@ -5,13 +5,13 @@
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h2>Mahsulot qo‘shish</h2>
-  <form method="POST" enctype="multipart/form-data">
-    <input type="text" name="name" placeholder="Nomi" required><br>
+  <h2>Yangi mahsulot</h2>
+  <form method="post" enctype="multipart/form-data">
+    <input type="text" name="name" placeholder="Mahsulot nomi" required><br>
     <input type="number" name="price" placeholder="Narxi" required><br>
-    <input type="file" name="image"><br>
     <textarea name="note" placeholder="Eslatma"></textarea><br>
-    <button type="submit">Qo‘shish</button>
+    <input type="file" name="image" required><br>
+    <button type="submit">Saqlash</button>
   </form>
 </body>
 </html>

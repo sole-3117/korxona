@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>O‘zgarishlar tarixi</title>
+  <title>Tarix</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h2>🕒 O‘zgarishlar tarixi</h2>
+  <h2>O‘zgartirishlar tarixi</h2>
+  <a href="/dashboard">⬅️ Orqaga</a>
+  <hr>
   <ul>
-    {% for h in history %}
-      <li>{{h[0]}} → {{h[1]}} ({{h[2]}} tomonidan)</li>
-    {% endfor %}
+  {% for h in records %}
+    <li><b>{{ h[1] }}</b> — {{ h[2] }} ({{ h[3] }})</li>
+  {% endfor %}
   </ul>
 </body>
 </html>

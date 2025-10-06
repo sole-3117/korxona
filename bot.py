@@ -1,20 +1,37 @@
-import logging
-from aiogram import Bot, Dispatcher, executor, types
+import os
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import CommandStart
+from aiogram.types import WebAppInfo, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram import F
+from aiogram import Router
+import asyncio
+from dotenv import load_dotenv
 
-API_TOKEN = "
-8497416969:AAGl74-w7DI3M61x3tSl1j-u_pSB_ofvyNg"
-WEB_APP_URL = "https://your-render-url.onrender.com"  # Flask joylashgan manzil
+load_dotenv()
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+WEBAPP_URL = os.getenv("WEBAPP_URL")
 
-logging.basicConfig(level=logging.INFO)
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher()
+router = Router()
 
-@dp.message_handler(commands=["start"])
+@router.message(CommandStart())
 async def start(message: types.Message):
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn = types.KeyboardButton("🛍️ Kirish", web_app=types.WebAppInfo(url=WEB_APP_URL))
-    kb.add(btn)
-    await message.answer("Assalomu alaykum! Bu bot orqali do‘kon boshqaruvi mumkin.", reply_markup=kb)
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="🪄 Mini App ochish", web_app=WebAppInfo(url=f"{WEBAPP_URL}"))]
+        ]
+    )
+    await message.answer(
+        f"Assalomu aleykum, {message.from_user.first_name}!\n"
+        f"Bu bot shaxsiy 🤫\n\nQuyidagi tugmadan mini ilovani oching 👇",
+        reply_markup=keyboard
+    )
+
+dp.include_router(router)
+
+async def main():
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())

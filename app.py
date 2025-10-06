@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_file
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_file, flash
 import sqlite3, os, json, datetime
 
 app = Flask(__name__)
@@ -12,12 +12,14 @@ DB_NAME = 'korxona.db'
 def init_db():
     with sqlite3.connect(DB_NAME) as con:
         cur = con.cursor()
+        # Foydalanuvchilar jadvali
         cur.execute('''CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             login TEXT UNIQUE,
             password TEXT,
             role TEXT
         )''')
+        # Mahsulotlar jadvali
         cur.execute('''CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
@@ -25,17 +27,21 @@ def init_db():
             image TEXT,
             note TEXT
         )''')
+        # Tarix jadvali
         cur.execute('''CREATE TABLE IF NOT EXISTS history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user TEXT,
             action TEXT,
             time TEXT
         )''')
+        # Superadmin mavjudligini tekshirish
         cur.execute("SELECT * FROM users WHERE login='superadmin'")
         if not cur.fetchone():
-            cur.execute("INSERT INTO users (login, password, role) VALUES (?, ?, ?)", 
+            cur.execute("INSERT INTO users (login, password, role) VALUES (?, ?, ?)",
                         ('superadmin', 'emaktab', 'superadmin'))
+            print("✅ Superadmin yaratildi (login: superadmin, parol: emaktab)")
         con.commit()
+
 init_db()
 
 # --- Foydalanuvchini tekshirish ---
@@ -47,18 +53,23 @@ def check_user(login, password):
 
 # --- Harakat tarixini yozish ---
 def add_history(user, action):
-    with sqlite3.connect(DB_NAME) as con:
-        cur = con.cursor()
-        cur.execute("INSERT INTO history (user, action, time) VALUES (?, ?, ?)", 
-                    (user, action, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
-        con.commit()
+    try:
+        with sqlite3.connect(DB_NAME) as con:
+            cur = con.cursor()
+            cur.execute("INSERT INTO history (user, action, time) VALUES (?, ?, ?)",
+                        (user, action, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+            con.commit()
+    except Exception as e:
+        print("❌ Tarix yozishda xato:", e)
 
+# --- Asosiy sahifa ---
 @app.route('/')
 def home():
     if 'user' not in session:
         return redirect(url_for('login'))
     return redirect(url_for('dashboard'))
 
+# --- Login sahifasi ---
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -68,27 +79,32 @@ def login():
         if user:
             session['user'] = {'login': user[1], 'role': user[3]}
             add_history(user[1], "Tizimga kirdi")
+            flash("Xush kelibsiz!", "success")
             return redirect(url_for('dashboard'))
         else:
-            return render_template('login.html', error="Login yoki parol xato!")
+            flash("Login yoki parol xato!", "danger")
     return render_template('login.html')
 
+# --- Logout ---
 @app.route('/logout')
 def logout():
-    add_history(session['user']['login'], "Tizimdan chiqdi")
-    session.pop('user', None)
+    if 'user' in session:
+        add_history(session['user']['login'], "Tizimdan chiqdi")
+        session.pop('user', None)
     return redirect(url_for('login'))
 
+# --- Dashboard (asosiy sahifa) ---
 @app.route('/dashboard')
 def dashboard():
     if 'user' not in session:
         return redirect(url_for('login'))
     with sqlite3.connect(DB_NAME) as con:
         cur = con.cursor()
-        cur.execute("SELECT * FROM products")
+        cur.execute("SELECT * FROM products ORDER BY id DESC")
         products = cur.fetchall()
     return render_template('dashboard.html', products=products, user=session['user'])
 
+# --- Mahsulot qo‘shish ---
 @app.route('/add', methods=['GET', 'POST'])
 def add_product():
     if 'user' not in session:
@@ -97,19 +113,22 @@ def add_product():
         name = request.form['name']
         price = request.form['price']
         note = request.form['note']
-        image = request.files['image']
-        filename = image.filename
-        path = os.path.join(UPLOAD_FOLDER, filename)
-        image.save(path)
+        image = request.files.get('image')
+        filename = None
+        if image and image.filename:
+            filename = datetime.datetime.now().strftime("%Y%m%d%H%M%S_") + image.filename
+            image.save(os.path.join(UPLOAD_FOLDER, filename))
         with sqlite3.connect(DB_NAME) as con:
             cur = con.cursor()
-            cur.execute("INSERT INTO products (name, price, image, note) VALUES (?, ?, ?, ?)", 
+            cur.execute("INSERT INTO products (name, price, image, note) VALUES (?, ?, ?, ?)",
                         (name, price, filename, note))
             con.commit()
         add_history(session['user']['login'], f"Mahsulot qo‘shdi: {name}")
+        flash("✅ Mahsulot muvaffaqiyatli qo‘shildi!", "success")
         return redirect(url_for('dashboard'))
     return render_template('add.html', user=session['user'])
 
+# --- Tarix sahifasi ---
 @app.route('/history')
 def history():
     if 'user' not in session:
@@ -120,9 +139,11 @@ def history():
         records = cur.fetchall()
     return render_template('history.html', records=records, user=session['user'])
 
+# --- Export (faqat superadmin) ---
 @app.route('/export')
 def export_data():
     if 'user' not in session or session['user']['role'] != 'superadmin':
+        flash("❌ Faqat superadmin bu bo‘limdan foydalana oladi!", "danger")
         return redirect(url_for('dashboard'))
     with sqlite3.connect(DB_NAME) as con:
         data = {}
@@ -131,13 +152,16 @@ def export_data():
             cur.execute(f"SELECT * FROM {table}")
             data[table] = cur.fetchall()
     filename = 'export.json'
-    with open(filename, 'w') as f:
-        json.dump(data, f, indent=4)
+    with open(filename, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+    add_history(session['user']['login'], "Ma’lumotlar eksport qilindi")
     return send_file(filename, as_attachment=True)
 
+# --- Import (faqat superadmin) ---
 @app.route('/import', methods=['POST'])
 def import_data():
     if 'user' not in session or session['user']['role'] != 'superadmin':
+        flash("❌ Ruxsat yo‘q!", "danger")
         return redirect(url_for('dashboard'))
     file = request.files['file']
     data = json.load(file)
@@ -153,7 +177,10 @@ def import_data():
                     cur.execute("INSERT INTO history (id, user, action, time) VALUES (?, ?, ?, ?)", row)
         con.commit()
     add_history(session['user']['login'], "Ma’lumotlar import qilindi")
+    flash("✅ Ma’lumotlar import qilindi!", "success")
     return redirect(url_for('dashboard'))
 
+# --- Flaskni ishga tushirish ---
 if __name__ == '__main__':
+    print("🚀 Korxona mini-app ishga tushdi: http://localhost:8080")
     app.run(host='0.0.0.0', port=8080)

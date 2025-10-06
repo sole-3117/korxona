@@ -1,3 +1,27 @@
-body { font-family: Arial, sans-serif; background: #fdfdfd; color: #222; }
-input, textarea, button { margin: 5px; padding: 5px; }
-img { vertical-align: middle; }
+body {
+  font-family: Arial;
+  background: #fff;
+  color: #333;
+  text-align: center;
+}
+input, textarea, button {
+  margin: 5px;
+  padding: 8px;
+  width: 80%;
+}
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+.error {
+  color: red;
+}
+.product {
+  border: 1px solid #ddd;
+  margin: 10px auto;
+  width: 300px;
+  padding: 10px;
+  border-radius: 5px;
+}

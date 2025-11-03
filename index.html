@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Korxona Mini App — v0.2.2025</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="left-top">
+      <div id="theme-toggle" class="theme-toggle">🌙</div>
+      <div class="logo">Korxona</div>
+    </div>
+    <div id="currentUser" class="user-badge">Kirish yo'q</div>
+  </header>
+
+  <main>
+    <!-- LOGIN VIEW -->
+    <section id="view-login" class="view active">
+      <div class="card auth-card">
+        <h2>Korxona tizimiga kirish</h2>
+        <label>Login</label>
+        <input id="login-login" placeholder="Login" />
+        <label>Parol</label>
+        <input id="login-pass" type="password" placeholder="Parol" />
+        <div class="row">
+          <button id="btn-login">Kirish</button>
+          <button id="btn-demo" class="ghost">Demo (local)</button>
+        </div>
+        <div class="small">Agar ruxsatingiz bo'lsa tizimga kiring.</div>
+      </div>
+    </section>
+
+    <!-- SEARCH / HOME VIEW -->
+    <section id="view-search" class="view">
+      <div class="left">
+        <div id="search-image-placeholder" class="image-preview big">Rasm</div>
+        <div class="toggle-label">Rasmi: <span id="search-image-type">Rasm yoki default</span></div>
+      </div>
+
+      <div class="right">
+        <div class="card">
+          <label>Mahsulot nomi</label>
+          <input id="search-input" placeholder="Mahsulotni qidiring..." />
+        </div>
+        <div id="search-results" class="list"></div>
+      </div>
+    </section>
+
+    <!-- ADD PRODUCT VIEW -->
+    <section id="view-add" class="view">
+      <div class="card">
+        <h3>Mahsulot qo'shish</h3>
+        <label>Mahsulot nomi (majburiy)</label>
+        <input id="add-name" placeholder="Masalan: Olma 1kg" />
+
+        <label>Narxi (majburiy)</label>
+        <input id="add-price" placeholder="Masalan: 12000" type="number" />
+
+        <label>Rasm (ixtiyoriy)</label>
+        <input id="add-image" type="file" accept="image/*" />
+
+        <label>Eslatma</label>
+        <textarea id="add-note" placeholder="Qo'shimcha ma'lumot..."></textarea>
+
+        <div class="row">
+          <button id="btn-add">Qo'shish</button>
+          <button id="btn-clear-form" class="ghost">Tozalash</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROFILE / ADMIN VIEW -->
+    <section id="view-profile" class="view">
+      <div class="profile-top">
+        <div id="profile-photo" class="profile-photo">Profil</div>
+        <div class="profile-info">
+          <h3 id="profile-username">Kirish yo'q</h3>
+          <div class="small">Versiya: <strong>0.2.2025</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4>Autentifikatsiya</h4>
+        <div class="row">
+          <button id="btn-logout" class="ghost">Logout</button>
+        </div>
+      </div>
+
+      <div id="profile-actions" class="card">
+        <h4>Profil amallari</h4>
+        <div class="row">
+          <button id="btn-change-pass" class="ghost">Parolni o'zgartirish</button>
+          <button id="btn-export">Export (botga)</button>
+          <button id="btn-import">Import (botga yuborish)</button>
+        </div>
+
+        <div id="admin-controls" class="admin-only hidden">
+          <hr />
+          <h4>Super admin boshqaruvlari</h4>
+          <label>Yangi admin login</label>
+          <input id="new-admin-login" placeholder="admin1" />
+          <label>Yangi admin parol</label>
+          <input id="new-admin-pass" placeholder="parol" />
+          <div class="row">
+            <button id="btn-add-admin">Admin qo'shish</button>
+            <button id="btn-promote-admin" class="ghost">Adminni superga oshirish</button>
+          </div>
+        </div>
+
+        <div id="change-history" class="history small"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button id="nav-search" class="nav-btn active">🔍</button>
+    <button id="nav-add" class="nav-btn">➕</button>
+    <button id="nav-profile" class="nav-btn">👤</button>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+</html>

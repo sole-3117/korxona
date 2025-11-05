@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korxona v0.2.2025</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>Korxona Mini App</h1>
+        <div id="theme-toggle">🌙</div>
+    </header>
+
+    <main>
+        <section id="search">
+            <h2>🔍 Mahsulot qidirish</h2>
+            <input type="text" id="searchInput" placeholder="Mahsulot nomini yozing...">
+            <ul id="productList"></ul>
+        </section>
+
+        <section id="addProduct">
+            <h2>➕ Mahsulot qo‘shish</h2>
+            <form id="addForm">
+                <input type="text" name="name" placeholder="Mahsulot nomi" required>
+                <input type="text" name="price" placeholder="Narxi (ixtiyoriy)">
+                <textarea name="note" placeholder="Eslatma..."></textarea>
+                <button type="submit">Qo‘shish</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>Version 0.2.2025 | © Korxona</p>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

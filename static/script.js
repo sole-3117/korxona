@@ -1,4 +1,4 @@
-// static/script.js
+// static/script.js 
 const API_PREFIX = ""; // same origin
 // DOM refs
 const loginView = document.getElementById('loginView');
@@ -256,3 +256,4 @@ async function loadHistory(){
   changeHistory.innerHTML = arr.map(h=>`<div><strong>${escapeHtml(h.user)}</strong> — ${escapeHtml(h.action)} <div class="small">${escapeHtml(h.ts)}</div></div>`).join('');
 }
 setInterval(()=>{ if(state.role==='super') loadHistory(); }, 5000);
+//salol

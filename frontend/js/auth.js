@@ -1,18 +1,15 @@
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
+document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    const telegramId = Telegram.WebApp.initDataUnsafe.user ? Telegram.WebApp.initDataUnsafe.user.id : 0;
-    
+    const telegramId = Telegram.WebApp.initDataUnsafe?.user?.id || 123456789;  // Test uchun
+
     try {
-        const data = { username, password, telegram_id: telegramId };
-        const res = await apiCall('/auth/login', 'POST', data);
+        const res = await apiCall('/auth/login', 'POST', { username, password, telegram_id: telegramId });
         localStorage.setItem('token', res.access_token);
-        showPage('dashboard');  // Dashboard sahifasiga o'tish
+        currentUser = { role: res.role };
+        window.location.href = '/static/dashboard.html';
     } catch (err) {
-        document.getElementById('error').textContent = 'Xato: ' + err.message;
+        document.getElementById('error').textContent = err.message;
     }
 });
-
-// Auto-logout (30 daqiqa)
-setTimeout(() => { localStorage.removeItem('token'); showPage('login'); }, 1800000);

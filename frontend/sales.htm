@@ -1,0 +1,15 @@
+<div id="sales-page" class="page">
+    <input type="text" id="search" placeholder="Mahsulot qidirish" oninput="loadProducts(this.value)">
+    <div id="productList" class="grid"></div>
+    <div id="cart" class="cart">
+        <h3>Savatcha</h3>
+        <div id="cartItems"></div>
+        <input type="text" id="discount" placeholder="Chegirma (so'm yoki %)">
+        <select id="payment">
+            <option value="naqd">Naqd</option>
+            <option value="karta">Karta</option>
+            <option value="aralash">Aralash</option>
+        </select>
+        <button onclick="checkout()">To'lash</button>
+    </div>
+</div>

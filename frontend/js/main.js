@@ -1,20 +1,42 @@
+let currentUser = {};
 Telegram.WebApp.ready();
-const apiBase = '/api';  // Backend URL
+const API_BASE = '/api';  // Backend URL
 
-// API chaqiruv
 async function apiCall(endpoint, method = 'GET', data = null) {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${apiBase}${endpoint}`, {
+    const options = {
         method,
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: data ? JSON.stringify(data) : null
-    });
-    if (!response.ok) throw new Error(await response.text());
+    };
+    if (data) options.body = JSON.stringify(data);
+    const response = await fetch(`${API_BASE}${endpoint}`, options);
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Xato yuz berdi');
+    }
     return response.json();
 }
 
-// Sahifa o'zgartirish
-function showPage(page) {
+function showPage(pageId) {
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    document.getElementById(page).style.display = 'block';
+    document.getElementById(pageId)?.style.display = 'block';
+    if (pageId === 'sales') loadProducts();
+}
+
+async function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/static/index.html';
+}
+
+// Auto-logout 30 daqiqa
+setTimeout(logout, 1800000);
+
+// Dashboard yuklash
+if (localStorage.getItem('token')) {
+    try {
+        currentUser = await apiCall('/auth/me');
+        showPage('dashboard');
+    } catch (err) {
+        localStorage.removeItem('token');
+    }
 }

@@ -1,1 +1,25 @@
-
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard</h1>
+        <nav>
+            <button onclick="showPage('sales')">Sotuv</button>
+            <button onclick="showPage('expenses')">Xarajat</button>
+            <button onclick="showPage('inventory')">Ombor</button>
+            <button onclick="showPage('reports')">Hisobot</button>
+            <button onclick="logout()">Chiqish</button>
+        </nav>
+        <div id="content"></div>
+    </div>
+    <script src="js/main.js"></script>
+    <script src="js/sales.js"></script> <!-- Boshqa JS'lar -->
+</body>
+</html>
